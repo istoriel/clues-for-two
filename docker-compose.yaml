@@ -1,6 +1,6 @@
 version: "2"
 services:
-  codenames:
+  clues-for-two:
     build: . 
     ports:
       - "2000:2000"

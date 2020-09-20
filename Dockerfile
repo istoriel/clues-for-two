@@ -4,8 +4,8 @@ EXPOSE 2000
 ENV REQUIRE_HTTPS=false
 
 USER node
-RUN mkdir -p /home/node/codenames
-WORKDIR /home/node/codenames
+RUN mkdir -p /home/node/clues-for-two
+WORKDIR /home/node/clues-for-two
 
 COPY --chown=node . .
 

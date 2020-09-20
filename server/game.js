@@ -6,7 +6,7 @@ const cardPacks = {}
 const wordsJsonFilename = './server/words.json'
 const wordsJson = JSON.parse(fs.readFileSync(wordsJsonFilename, 'utf8'))
 
-// Codenames Game
+// Clues For Two Game
 class Game{
   static loadCardPack(cardPack) {
     if (cardPack.jsonName) {

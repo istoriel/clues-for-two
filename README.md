@@ -1,4 +1,4 @@
-# codenames.plus
+# Clues For Two
 nodejs server for multiplayer codenames webapp game
 
 # Credits
