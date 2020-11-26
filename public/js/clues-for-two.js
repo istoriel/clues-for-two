@@ -232,6 +232,9 @@ buttonServerMessageOkay.onclick = () => {
 
 var connected = false
 var reconnectSettings = null
+var reconnectInterval = null
+var reconnectTimeLeft = null
+var lastReconnectTimer = null
 
 disconnectLink.addEventListener('click', () => {
   socket.disconnect()
@@ -242,6 +245,8 @@ reconnectLink.addEventListener('click', () => {
 })
 
 socket.on('connect', () => {
+  clearInterval(reconnectInterval)
+
   if (connected) return;
   connected = true;
 
@@ -265,6 +270,17 @@ socket.on('disconnect', () => {
       'role': playerRole,
     }
   }
+
+  reconnectTimeLeft = 1
+  reconnectTimer.innerText = reconnectTimeLeft
+  lastReconnectTimer = 1
+  reconnectInterval = setInterval(() => {
+    if (--reconnectTimeLeft == 0) {
+      socket.connect()
+      reconnectTimeLeft = lastReconnectTimer *= 2;
+    }
+    reconnectTimer.innerText = reconnectTimeLeft
+  }, 1000)
 })
 
 // Server Responses to this client
