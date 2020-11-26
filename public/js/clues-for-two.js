@@ -586,7 +586,7 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
                 : (' ('+(c.count === 'unlimited' ? '∞' : c.count)+')')))
             let span = document.createElement('span')
             span.innerText = tile.clues.map(c => c.word).join(", ")
-            span.title = clues.join("\n")
+            button.title = clues.join("\n")
             span.className = 'tileOverlay clues'
             button.appendChild(span)
           }
