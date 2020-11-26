@@ -295,6 +295,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    joinErrorMessage.style.display = 'none'
     playerNameDiv.innerText = data.playerName
     updateFragment()
 
@@ -302,7 +303,10 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
       socket.emit('joinTeam', { team: reconnectSettings.team })
       socket.emit('switchRole', { role: reconnectSettings.role })
     }
-  } else joinErrorMessage.innerText = data.msg
+  } else {
+    joinErrorMessage.innerText = data.msg
+    joinErrorMessage.style.display = 'block'
+  }
 })
 
 socket.on('createResponse', (data) =>{      // Response to creating room
@@ -311,9 +315,13 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    joinErrorMessage.style.display = 'none'
     playerNameDiv.innerText = data.playerName
     updateFragment();
-  } else joinErrorMessage.innerText = data.msg
+  } else {
+    joinErrorMessage.innerText = data.msg
+    joinErrorMessage.style.display = 'block'
+  }
 })
 
 socket.on('leaveResponse', (data) =>{       // Response to leaving room

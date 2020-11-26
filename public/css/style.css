@@ -496,15 +496,19 @@ body {
   text-align: center;
 }
 
-#join-game .join-input {
-  display: block;
+#join-game form {
+  display: table;
   width: 275px;
   margin: 0 auto;
+}
+
+#join-game .join-input {
+  display: table-row;
   text-align: left;
 }
 
-#join-game .join-input input{
-  float: right;
+#join-game .join-input input, #join-game .join-input label {
+  display: table-cell;
   line-height: 18px;
 }
 
@@ -534,9 +538,14 @@ body {
 }
 
 #join-game #error-message {
-  height: 15px;
   text-align: center;
   margin-top: 5px;
+  background: yellow;
+  width: 100%;
+  display: none;
+}
+#error-message::before, #error-message::after {
+  content: '⚠️';
 }
 
 button {
