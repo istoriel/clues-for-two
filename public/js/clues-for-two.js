@@ -435,6 +435,19 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
     }
   }
 
+  let endProposals = proposals[data.game.endTurnString] || 0
+  let endProposalSpan = endTurn.querySelector('.proposals')
+  if (endProposals == 0 && endProposalSpan) {
+    endTurn.removeChild(endProposalSpan)
+  } else if (endProposals > 0) {
+    if (!endProposalSpan) {
+      endProposalSpan = document.createElement('span')
+      endTurn.appendChild(endProposalSpan)
+    }
+    endProposalSpan.className = 'tileOverlay proposals ' + data.game.turn
+    endProposalSpan.innerText = '🤔'.repeat(endProposals)
+  }
+
   // Update the board display
   updateBoard(data.game.board, proposals, data.game.over, data.game.turn, data.team, data.game.clueWords)
   updateLog(data.game.log, data.team, data.game.over)

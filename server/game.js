@@ -53,6 +53,12 @@ class Game{
     this.log = []     // Initialize empty log
     this.clue = null
     this.clueWords = []
+
+    let boardWords = new Set(this.board.map(row => row.map(tile => tile.word)).reduce((a, b) => [...a, ...b]))
+    var i = 1;
+    do {
+      this.endTurnString = 'End' + ' '.repeat(i++) + 'Turn'
+    } while (boardWords.has(this.endTurnString))
   }
 
   setCustomWords(customWords){
