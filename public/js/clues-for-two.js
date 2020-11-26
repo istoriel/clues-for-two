@@ -640,10 +640,3 @@ function updateFragment() {
   let fragment =  'room=' + encodeURIComponent(room) + '&password=' + encodeURIComponent(password);
   window.location.hash = fragment;
 }
-
-// Client Side UI Elements
-
-// Hide donate banner
-document.getElementById('donate-hide').onclick = () => { 
-  document.getElementById('donate').className = 'hide'
-}
