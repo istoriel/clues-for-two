@@ -18,6 +18,12 @@
 
 <body>
   <span id='server-stats' style='display: none'></span>
+  <a id = 'disconnect' href = 'javascript:'>Disconnect (for testing).</a>
+  <div id = 'disconnected'>
+    You have lost connection with the server.
+    <a id = 'reconnect' href = 'javascript:'>Try to reconnect.</a>
+    (Automatically reconnecting in <span id = 'reconnect-timer'>(never)</span> seconds.)
+  </div>
   <button id='about-button'class='above'>About</button>
   <div id = 'about-window' style="display:none"class='above'>
     <div>
