@@ -307,10 +307,16 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     if (reconnectSettings != null) {
       socket.emit('joinTeam', { team: reconnectSettings.team })
       socket.emit('switchRole', { role: reconnectSettings.role })
+      reconnectSettings = null
     }
   } else {
     joinErrorMessage.innerText = data.msg
     joinErrorMessage.style.display = 'block'
+
+    if (reconnectSettings != null) {
+      joinDiv.style.display = 'block'
+      gameDiv.style.display = 'none'
+    }
   }
 })
 
