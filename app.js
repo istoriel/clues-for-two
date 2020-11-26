@@ -13,10 +13,10 @@ catch (e){
   console.log("No local settings file, use default settings", e)
 }
 try {
-  // Finally override/add if any key is specified in env config under codenames_settings key
+  // Finally override/add if any key is specified in env config under cluesfortwo_settings key
   // config format in env should be json parsable e.g:
-  // codenames_settings={"requireHttps" : false, "defaultCardPacks": ["Hullor Pack"], "redTeamName": "fire"}
-  let env_settings = process.env.codenames_settings ? JSON.parse(process.env.codenames_settings) : {}
+  // cluesfortwo_settings={"requireHttps" : false, "defaultCardPacks": ["Hullor Pack"], "redTeamName": "fire"}
+  let env_settings = process.env.cluesfortwo_settings ? JSON.parse(process.env.cluesfortwo_settings) : {}
   for(let key in env_settings){
     settings[key] = env_settings[key]
   }
@@ -43,7 +43,7 @@ let requireHttps = (process.env.REQUIRE_HTTPS == "true"
 function listen(){
   let host = server.address().address;
   let port = server.address().port;
-  console.log('Codenames Server Started at http://' + host + ':' + port);
+  console.log('Clues For Two Server Started at http://' + host + ':' + port);
 
   if (requireHttps) {
     console.log("Https Required");
@@ -83,7 +83,7 @@ const heroku = new Heroku({ token:process.env.API_TOKEN})// DELETE requests
 
 ////////////////////////////////////////////////////////////////////////////
 
-// Codenames Game
+// Clues For Two Game
 const Game = require('./server/game.js')
 settings.cardPacks.forEach(Game.loadCardPack)
 settings.additionalCardPacks.forEach(Game.loadCardPack)
@@ -711,7 +711,7 @@ function herokuRestart(){
     SOCKET_LIST[socket].emit('serverMessage', {msg:"Server Successfully Restarted for Maintnence"})
     SOCKET_LIST[socket].emit('leaveResponse', {success:true})
   }
-  heroku.delete('/apps/codenames-plus/dynos/').then(app => {})
+  heroku.delete('/apps/clues-for-two/dynos/').then(app => {})
 }
 
 // Warn users of restart

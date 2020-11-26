@@ -882,3 +882,23 @@ button {
 #players #panel #color-scheme-blue > button {
   float: right;
 }
+
+#disconnect {
+  display: none;
+}
+
+#disconnected {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 4;
+  background: yellow;
+  border-bottom: solid black 2px;
+  font-size: 2em;
+}
+#disconnected::before {
+  content: '⚠️';
+}
+#disconnected::after {
+  content: '⚠️';
+}

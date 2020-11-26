@@ -1,16 +1,14 @@
-FROM node:13
+FROM node:13-slim
 
 EXPOSE 8051
 ENV PORT=8051
 ENV REQUIRE_HTTPS=false
 
 USER node
-RUN mkdir -p /home/node/codenames
-WORKDIR /home/node/codenames
+RUN mkdir -p /home/node/clues-for-two
+WORKDIR /home/node/clues-for-two
 
-COPY --chown=node * ./
-COPY --chown=node server/ ./server/
-COPY --chown=node public/ ./public/
+COPY --chown=node . .
 
 RUN npm install
 

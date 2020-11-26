@@ -1,13 +1,13 @@
 <head>
-  <title>Codenames.plus</title>
+  <title>Clues For Two</title>
   <!--meta-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <meta property="og:type" content="website">
   <!--title-->
-  <meta property="og:title" content="Codenames.plus">
+  <meta property="og:title" content="Clues For Two">
   <!--page description-->
-  <meta name="description" content="Codenames.plus - The classic 'Codenames' card / boardgame in your browser! Play with your friends online instantly just by creating a new room and sharing the info.">
+  <meta name="description" content="Clues For Two - browser-based team versus word game">
   <!--Javascript-->
   <script src='js/socket.io.js'></script>
   <!-- CSS -->
@@ -17,16 +17,23 @@
 </head>
 
 <body>
-  <p id='donate'>
-    <a id="donate-link" target='_blank' href="https://paypal.me/JoeMarchesi">Donate to help with hosting</a> 
-    <a id='donate-hide'>[hide]</a></p>
   <span id='server-stats' style='display: none'></span>
+  <a id = 'disconnect' href = 'javascript:'>Disconnect (for testing).</a>
+  <div id = 'disconnected'>
+    You have lost connection with the server.
+    <a id = 'reconnect' href = 'javascript:'>Try to reconnect.</a>
+    (Trying again in <span id = 'reconnect-timer'>(never)</span> seconds.)
+  </div>
   <button id='about-button'class='above'>About</button>
   <div id = 'about-window' style="display:none"class='above'>
     <div>
-      <h2>Codenames.plus originally by Joooop</h2>
+      <h2>Clues For Two based on Joooop's Codenames.plus</h2>
+      <p style="text-align: center;">
+        Based on the <a href="https://czechgames.com/en/codenames/">Codenames</a> board game
+        designed by Vlaada Chvátil and published by Czech Games Edition
+      </p>
       <a target='_blank' href="https://twitter.com/J0ooop">Follow @j0ooop on Twitter</a>
-      <a target='_blank' href="https://joemar.me">Visit my Site: joemar.me</a>
+      <a target='_blank' href="https://joemar.me">Visit Joooop's Site: joemar.me</a>
       <br>
       <p style="text-align: center;">
         <h3>Other code contributors</h3>
@@ -34,14 +41,14 @@
         <a target='_blank' href="https://github.com/SayantaBhar">Sayanta Bhar</a>
       </p>
       <br>
-      <a target='_blank' href='https://github.com/dperelman/codenames.plus/tree/master'>View Source Code</a>
+      <a target='_blank' href='https://github.com/dperelman/clues-for-two/tree/master'>View Source Code</a>
       <br>
     </div>
     <h3>How To Play</h3>
     <ul>
-      <li><i><b>TLDR;</b> In Codenames, two teams compete to see who can make contact with all of their agents first. Spymasters give one-word clues that can point to multiple words on the board. The spymaster also gives a number that corresponds to the number of words that clue applies to (Example: "Animal 3"). Their teammates try to guess words of the right color while avoiding those that belong to the opposing team. You are allowed to guess n + 1 times where n is the number the spymaster gives. Everyone wants to avoid the assassin. <span style='font-size: 10px'>No laming.</span></i></li>
+      <li><i><b>TLDR;</b> In Clues For Two, two teams compete to see who can make contact with all of their agents first. Spymasters give one-word clues that can point to multiple words on the board. The spymaster also gives a number that corresponds to the number of words that clue applies to (Example: "Animal 3"). Their teammates try to guess words of the right color while avoiding those that belong to the opposing team. You are allowed to guess n + 1 times where n is the number the spymaster gives. Everyone wants to avoid the assassin. <span style='font-size: 10px'>No laming.</span></i></li>
       <br>
-      <li>Codenames is a game of guessing which code names (words) in a set are related to a hint-word given by another player.</li>
+      <li>Clues For Two is a game of guessing which code names (words) in a set are related to a hint-word given by another player.</li>
       <li>Players split into two teams: red and blue. One player of each team is selected as the team's spymaster; the others are field operatives (Guessers).</li>
       <li>Twenty-five code name cards, each bearing a word, are laid out in a 5×5 rectangular grid, in random order. A number of these words represent red agents, a number represent blue agents, one represents an assassin, and the others represent innocent bystanders.</li>
       <li>The teams' spymasters are shown the 5×5 grid of 25 words with various colors, each corresponding to one of the code name cards on the table. Teams take turns. On each turn, the appropriate spymaster gives a verbal hint about the words on the respective cards. <b>Each hint may only consist of one single word and a number.</b> The spymaster gives a hint that is related to as many of the words on his/her own agents' cards as possible, but not to any others – lest they accidentally lead their team to choose a card representing an innocent bystander, a friendly agent, or the assassin. </li>
@@ -61,7 +68,7 @@
   </div>
   <div id="overlay"> </div>
   <div id="join-game">
-    <h1>Codenames.plus</h1>
+    <h1>Clues For Two</h1>
     <form>
       <div class='join-input'>
         <label for='join-nickname'>Nickname: </label>
@@ -84,7 +91,7 @@
     <button id="leave-room">Leave Room</button>
     <div id="player-name"></div>
     <div id='title'>
-        <h1>Codenames</h1>
+        <h1>Clues For Two</h1>
     </div>
     <div id="content">
       <div id="left">
@@ -210,5 +217,5 @@
     </div>
   </div>
 </body>
-<script language="javascript" type="text/javascript" src="js/codenames.js"></script>
+<script language="javascript" type="text/javascript" src="js/clues-for-two.js"></script>
 

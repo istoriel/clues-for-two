@@ -1,5 +1,11 @@
 let socket = io({path: window.location.pathname + 'socket.io'}) // Connect to server
 
+// Reconnect dialog
+let disconnectedDiv = document.getElementById('disconnected')
+let reconnectLink = document.getElementById('reconnect')
+let disconnectLink = document.getElementById('disconnect')
+let reconnectTimer = document.getElementById('reconnect-timer')
+
 // Sign In Page Elements
 ////////////////////////////////////////////////////////////////////////////
 // Divs
@@ -74,6 +80,7 @@ let colorAndTypeToTextMap = {"red" : "red", "blue" : "blue", "neutral" : "neutra
 ////////////////////////////////////////////////////////////////////////////
 // Default game settings
 let playerRole = 'guesser'
+let playerTeam = 'observer'
 let difficulty = 'normal'
 let mode = 'casual'
 let consensus = 'single'
@@ -94,15 +101,16 @@ joinPassword.value = extractFromFragment(window.location.hash, 'password');
 // UI Interaction with server
 ////////////////////////////////////////////////////////////////////////////
 // User Joins Room
-joinEnter.onclick = () => {       
+function enterRoom() {
   socket.emit('joinRoom', {
     nickname:joinNickname.value,
     room:joinRoom.value,
     password:joinPassword.value
   })
 }
+joinEnter.onclick = enterRoom
 // User Creates Room
-joinCreate.onclick = () => {      
+joinCreate.onclick = () => {
   socket.emit('createRoom', {
     nickname:joinNickname.value,
     room:joinRoom.value,
@@ -222,6 +230,59 @@ buttonServerMessageOkay.onclick = () => {
   overlay.style.display = 'none'
 }
 
+var connected = false
+var reconnectSettings = null
+var reconnectInterval = null
+var reconnectTimeLeft = null
+var lastReconnectTimer = null
+
+disconnectLink.addEventListener('click', () => {
+  socket.disconnect()
+})
+
+reconnectLink.addEventListener('click', () => {
+  socket.connect()
+})
+
+socket.on('connect', () => {
+  clearInterval(reconnectInterval)
+
+  if (connected) return;
+  connected = true;
+
+  disconnectedDiv.style.display = 'none'
+
+  if (reconnectSettings != null) {
+    enterRoom();
+  }
+})
+
+socket.on('disconnect', () => {
+  if (!connected) return;
+  connected = false;
+
+  disconnectedDiv.style.display = ''
+
+  let inRoom = gameDiv.style.display != 'none'
+  if (inRoom) {
+    reconnectSettings = {
+      'team': playerTeam,
+      'role': playerRole,
+    }
+  }
+
+  reconnectTimeLeft = 1
+  reconnectTimer.innerText = reconnectTimeLeft
+  lastReconnectTimer = 1
+  reconnectInterval = setInterval(() => {
+    if (--reconnectTimeLeft == 0) {
+      socket.connect()
+      reconnectTimeLeft = lastReconnectTimer *= 2;
+    }
+    reconnectTimer.innerText = reconnectTimeLeft
+  }, 1000)
+})
+
 // Server Responses to this client
 ////////////////////////////////////////////////////////////////////////////
 socket.on('serverStats', (data) => {        // Client gets server stats
@@ -235,7 +296,12 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
     playerNameDiv.innerText = data.playerName
-    updateFragment();
+    updateFragment()
+
+    if (reconnectSettings != null) {
+      socket.emit('joinTeam', { team: reconnectSettings.team })
+      socket.emit('switchRole', { role: reconnectSettings.role })
+    }
   } else joinErrorMessage.innerText = data.msg
 })
 
@@ -322,6 +388,10 @@ socket.on('customWords', (data) => {
 })
 
 socket.on('gameState', (data) =>{           // Response to gamestate update
+  if (data.team) {
+    playerTeam = data.team
+  }
+
   updateTeamColors(data);
   updateCardPackButtons(data.availableCardPacks);
 
@@ -639,11 +709,4 @@ function updateFragment() {
   let password = joinPassword.value;
   let fragment =  'room=' + encodeURIComponent(room) + '&password=' + encodeURIComponent(password);
   window.location.hash = fragment;
-}
-
-// Client Side UI Elements
-
-// Hide donate banner
-document.getElementById('donate-hide').onclick = () => { 
-  document.getElementById('donate').className = 'hide'
 }
