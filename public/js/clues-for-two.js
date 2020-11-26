@@ -108,6 +108,11 @@ function enterRoom() {
     password:joinPassword.value
   })
 }
+document.getElementById('join-form').addEventListener('submit', (e) => {
+  e.preventDefault()
+  enterRoom()
+  return false
+})
 joinEnter.onclick = enterRoom
 // User Creates Room
 joinCreate.onclick = () => {
