@@ -59,6 +59,7 @@ let buttonServerMessageOkay = document.getElementById('server-message-okay')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
+let clueWordsList = document.getElementById('clue-words-list')
 // Slider
 let timerSlider = document.getElementById('timer-slider')
 let timerSliderLabel = document.getElementById('timer-slider-label')
@@ -597,6 +598,9 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
       }
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
+  }
+  if (playerRole === 'spymaster' && turn === team) {
+    clueWordsList.innerText = clueWords.join(', ')
   }
   // Show the proper toggle options for the game difficulty
   if (difficulty === 'normal') {
