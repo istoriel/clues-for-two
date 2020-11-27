@@ -720,25 +720,27 @@ function updateLog(log, team, over){
   logDiv.innerHTML = ''
   log.forEach(logEntry => {
     let logSpan = document.createElement('span')
-    logSpan.className = logEntry.event + " " + logEntry.team
+    logSpan.className = "logEntry " + logEntry.event + " " + logEntry.team
+    let logText = document.createElement('span')
+    logText.className = "logText"
+    logSpan.appendChild(logText)
     if (logEntry.event === 'flipTile'){
-      logSpan.innerText = (consensus == 'single' ? logEntry.playerName + " from " : "")
-                            + colorAndTypeToTextMap[logEntry.team] + " team flipped "
+      logText.innerHTML = (consensus == 'single' ? logEntry.playerName + " on " : "")
+                            + colorAndTypeToTextMap[logEntry.team] + " flipped "
+                            + "<span class='tile " + logEntry.type + "'>"
                             + logEntry.word
-                            + " (" + colorAndTypeToTextMap[logEntry.type] + ")"
-                            + (logEntry.type === 'death' ? " ending the game" : logEntry.endedTurn ? " ending their turn" : "")
-    }
-    else if (logEntry.event === 'switchTurn'){
-      logSpan.innerText = "Switched to " + colorAndTypeToTextMap[logEntry.team] + " team's turn"
-    }
-    else if (logEntry.event === 'declareClue'){
+                            + "</span>"
+    } else if (logEntry.event === 'declareClue'){
       let clueCountView = logEntry.clue.count === '' ? '' : (' ('+(logEntry.clue.count === 'unlimited' ? '∞' : logEntry.clue.count)+')')
-      logSpan.innerText = colorAndTypeToTextMap[logEntry.team] + ' team was given the clue "'
+      logText.innerText = colorAndTypeToTextMap[logEntry.team] + ' clue "'
                            + logEntry.clue.word + '"' + clueCountView + " by " + logEntry.playerName
         + (logEntry.words.length > 0
             && (over || playerRole === 'spymaster' && logEntry.team === team)
            ? ' for ' + logEntry.words.map(w => '"' + w + '"').join(", ")
            : '')
+    } else {
+      // Don't display this log event.
+      return
     }
     logDiv.prepend(logSpan)
   })
