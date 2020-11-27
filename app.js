@@ -276,9 +276,34 @@ io.sockets.on('connection', function(socket){
     if (!PLAYER_LIST[socket.id]) return // Prevent Crash
     let player = PLAYER_LIST[socket.id];
     let room = player.room  // Get the room the client was in
-    ROOM_LIST[room].game.callSwitchTurnIfValid(player.team) // Switch the room's game's turn (if not switched already)
-    clearGuessProsposals(room)
-    gameUpdate(room)                        // Update the game for everyone in this room
+    let roomDetails = ROOM_LIST[room]
+    let game = roomDetails.game
+
+    if (player.team === game.turn) {
+      var doEndTurn = true
+      // check for consensus
+      if (roomDetails.consensus === 'consensus') {
+        if (player.guessProposal === game.endTurnString) {
+          player.guessProposal = null
+          doEndTurn = false
+        } else {
+          player.guessProposal = game.endTurnString
+
+          for (let player in roomDetails.players){
+            if (PLAYER_LIST[player].guessProposal !== game.endTurnString && PLAYER_LIST[player].role !== 'spymaster' && PLAYER_LIST[player].team === game.turn){
+              doEndTurn = false
+              break
+            }
+          }
+        }
+      }
+
+      if (doEndTurn) {
+        game.callSwitchTurnIfValid(player.team) // Switch the room's game's turn (if not switched already)
+        clearGuessProsposals(room)
+      }
+      gameUpdate(room)                        // Update the game for everyone in this room
+    }
   })
 
   // Click Tile. Called when client clicks a tile

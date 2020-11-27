@@ -44,9 +44,18 @@
   color: var(--blue-team-deep-color, #11779F) !important;
 }
 
-#info #clue-display {
+#info #clue-display-container {
   display: block;
   line-height: 1.2;
+}
+#info #guesses-status {
+  font-size: 0.7em;
+  color: #D8DDDF;
+  vertical-align: middle;
+  line-height: 1;
+}
+#info #guesses-used, #info #guesses-available {
+  color: #F8FDFF;
 }
 
 #info #end-turn {
@@ -75,8 +84,24 @@
   cursor: default;
 }
 
+#info #end-turn .proposals {
+  position: absolute;
+  right: 0;
+}
+
+#info #end-turn .proposals.red {
+  background-color: var(--red-team-deep-color, #B32728);
+  color: var(--red-team-light-color, rgb(236, 170, 170)) !important;
+}
+
+#info #end-turn .proposals.blue {
+  background-color: var(--blue-team-deep-color, #11779F);
+  color: var(--blue-team-light-color, rgb(168, 216, 235)) !important;
+}
+
 #clue-form {
   text-align: center;
+  color: #F8FDFF;
 }
 
 #clue-form #clue-word, #clue-form #clue-count, #clue-form #declare-clue {

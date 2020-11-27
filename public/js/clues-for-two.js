@@ -59,6 +59,7 @@ let buttonServerMessageOkay = document.getElementById('server-message-okay')
 // Clue entry
 let clueWord = document.getElementById('clue-word')
 let clueCount = document.getElementById('clue-count')
+let clueWordsList = document.getElementById('clue-words-list')
 // Slider
 let timerSlider = document.getElementById('timer-slider')
 let timerSliderLabel = document.getElementById('timer-slider-label')
@@ -73,6 +74,8 @@ let scoreBlue = document.getElementById('score-blue')
 let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
+let guessesUsed = document.getElementById('guesses-used')
+let guessesAvailable = document.getElementById('guesses-available')
 
 let colorAndTypeToTextMap = {"red" : "red", "blue" : "blue", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
@@ -108,6 +111,11 @@ function enterRoom() {
     password:joinPassword.value
   })
 }
+document.getElementById('join-form').addEventListener('submit', (e) => {
+  e.preventDefault()
+  enterRoom()
+  return false
+})
 joinEnter.onclick = enterRoom
 // User Creates Room
 joinCreate.onclick = () => {
@@ -295,14 +303,25 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    joinErrorMessage.style.display = 'none'
     playerNameDiv.innerText = data.playerName
     updateFragment()
 
     if (reconnectSettings != null) {
       socket.emit('joinTeam', { team: reconnectSettings.team })
       socket.emit('switchRole', { role: reconnectSettings.role })
+      reconnectSettings = null
     }
-  } else joinErrorMessage.innerText = data.msg
+  } else {
+    joinErrorMessage.innerText = data.msg
+    joinErrorMessage.style.display = 'block'
+
+    if (reconnectSettings != null) {
+      joinDiv.style.display = 'block'
+      gameDiv.style.display = 'none'
+      reconnectSettings = null
+    }
+  }
 })
 
 socket.on('createResponse', (data) =>{      // Response to creating room
@@ -311,9 +330,13 @@ socket.on('createResponse', (data) =>{      // Response to creating room
     joinDiv.style.display = 'none'
     gameDiv.style.display = 'block'
     joinErrorMessage.innerText = ''
+    joinErrorMessage.style.display = 'none'
     playerNameDiv.innerText = data.playerName
     updateFragment();
-  } else joinErrorMessage.innerText = data.msg
+  } else {
+    joinErrorMessage.innerText = data.msg
+    joinErrorMessage.style.display = 'block'
+  }
 })
 
 socket.on('leaveResponse', (data) =>{       // Response to leaving room
@@ -416,6 +439,19 @@ socket.on('gameState', (data) =>{           // Response to gamestate update
     }
   }
 
+  let endProposals = proposals[data.game.endTurnString] || 0
+  let endProposalSpan = endTurn.querySelector('.proposals')
+  if (endProposals == 0 && endProposalSpan) {
+    endTurn.removeChild(endProposalSpan)
+  } else if (endProposals > 0) {
+    if (!endProposalSpan) {
+      endProposalSpan = document.createElement('span')
+      endTurn.appendChild(endProposalSpan)
+    }
+    endProposalSpan.className = 'tileOverlay proposals ' + data.game.turn
+    endProposalSpan.innerText = '🤔'.repeat(endProposals)
+  }
+
   // Update the board display
   updateBoard(data.game.board, proposals, data.game.over, data.game.turn, data.team, data.game.clueWords)
   updateLog(data.game.log, data.team, data.game.over)
@@ -458,11 +494,26 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   clueEntryDiv.style.display = playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
   if (game.over || game.clue === null){
     clueDisplay.innerText = ''
+    guessesAvailable.innerText = '?'
   }
   else {
-    let clueCountView = game.clue.count === '' ? '' : (' ('+(game.clue.count === 'unlimited' ? '∞' : game.clue.count)+')')
+    var clueCountView = ''
+    if (game.clue.count === '') {
+      clueCountView = ''
+      guessesAvailable.innerText = '?'
+    } else if (game.clue.count === 'unlimited') {
+      clueCountView = ' (∞)'
+      guessesAvailable.innerText = '∞'
+    } else {
+      clueCountView = ' (' + game.clue.count + ')'
+      guessesAvailable.innerText = Number(game.clue.count) + 1
+    }
+    if (game.clue.count === '0') {
+      guessesAvailable.innerText = '∞'
+    }
     clueDisplay.innerText = game.clue.word + clueCountView
   }
+  guessesUsed.innerText = game.guessesUsed
 }
 
 // Update the clients timer slider
@@ -554,7 +605,7 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
                 : (' ('+(c.count === 'unlimited' ? '∞' : c.count)+')')))
             let span = document.createElement('span')
             span.innerText = tile.clues.map(c => c.word).join(", ")
-            span.title = clues.join("\n")
+            button.title = clues.join("\n")
             span.className = 'tileOverlay clues'
             button.appendChild(span)
           }
@@ -565,6 +616,9 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
       }
       if (difficulty === 'hard') button.className += " h"         // Flag all tiles if game is in hard mode
     }
+  }
+  if (playerRole === 'spymaster' && turn === team) {
+    clueWordsList.innerText = clueWords.join(', ')
   }
   // Show the proper toggle options for the game difficulty
   if (difficulty === 'normal') {
