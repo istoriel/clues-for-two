@@ -317,6 +317,7 @@ socket.on('joinResponse', (data) =>{        // Response to joining room
     if (reconnectSettings != null) {
       joinDiv.style.display = 'block'
       gameDiv.style.display = 'none'
+      reconnectSettings = null
     }
   }
 })
