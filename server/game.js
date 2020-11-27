@@ -47,6 +47,7 @@ class Game{
     this.over = false   // Whether or not the game has been won / lost
     this.winner = ''    // Winning team
     this.timer = this.timerAmount // Set the timer
+    this.guessesUsed = 0
 
     this.board        // Init the board
     this.newBoard()   // Populate the board
@@ -103,6 +104,7 @@ class Game{
         logEntry.endedTurn = true
       }
       this.log.push(logEntry)
+      this.guessesUsed++
       // Log the tile flip first, then switching turns.
       if (logEntry.endedTurn){
         this.switchTurn()
@@ -164,6 +166,7 @@ class Game{
     else this.turn = 'blue'
     this.clue = null
     this.clueWords = []
+    this.guessesUsed = 0
   }
 
   // 50% red turn, 50% blue turn

@@ -74,6 +74,8 @@ let scoreBlue = document.getElementById('score-blue')
 let turnMessage = document.getElementById('status')
 let timer = document.getElementById('timer')
 let clueDisplay = document.getElementById('clue-display')
+let guessesUsed = document.getElementById('guesses-used')
+let guessesAvailable = document.getElementById('guesses-available')
 
 let colorAndTypeToTextMap = {"red" : "red", "blue" : "blue", "neutral" : "neutral", "death" : "death", "undecided" : "undecided"}
 
@@ -492,11 +494,26 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   clueEntryDiv.style.display = playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
   if (game.over || game.clue === null){
     clueDisplay.innerText = ''
+    guessesAvailable.innerText = '?'
   }
   else {
-    let clueCountView = game.clue.count === '' ? '' : (' ('+(game.clue.count === 'unlimited' ? '∞' : game.clue.count)+')')
+    var clueCountView = ''
+    if (game.clue.count === '') {
+      clueCountView = ''
+      guessesAvailable.innerText = '?'
+    } else if (game.clue.count === 'unlimited') {
+      clueCountView = ' (∞)'
+      guessesAvailable.innerText = '∞'
+    } else {
+      clueCountView = ' (' + game.clue.count + ')'
+      guessesAvailable.innerText = Number(game.clue.count) + 1
+    }
+    if (game.clue.count === '0') {
+      guessesAvailable.innerText = '∞'
+    }
     clueDisplay.innerText = game.clue.word + clueCountView
   }
+  guessesUsed.innerText = game.guessesUsed
 }
 
 // Update the clients timer slider

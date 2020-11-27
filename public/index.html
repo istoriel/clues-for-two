@@ -131,7 +131,14 @@
       <div id="app">
         <div id="info">
           <p id='score'><span id='score-red'></span> - <span id='score-blue'></span></p>
-          <h2 id='turn'><span id='status'></span> <span id='timer'></span> <span id='clue-display'></span></h2>
+          <h2 id='turn'><span id='status'></span> <span id='timer'></span>
+            <span id='clue-display-container'>
+              <span id='clue-display'></span>
+              <span id='guesses-status'>[used
+                <span id='guesses-used'>0</span> of <span id='guesses-available'>?</span>
+              guesses]</span>
+            </span>
+          </h2>
           <button id='end-turn'>End Turn</button>
         </div>
         <div id="clue-form">
