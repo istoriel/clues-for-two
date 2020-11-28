@@ -506,7 +506,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
       guessesAvailable.innerText = '∞'
     } else {
       clueCountView = ' (' + game.clue.count + ')'
-      guessesAvailable.innerText = Number(game.clue.count) + 1
+      guessesAvailable.innerText = game.clue.count + "+1"
     }
     if (game.clue.count === '0') {
       guessesAvailable.innerText = '∞'
