@@ -7,11 +7,29 @@ body.team-red {
   background-size: 120px 160px;
 }
 
+body.team-red.active {
+  background:
+    radial-gradient(circle at 100% 50%, rgba(50,48,50,.7) 20%, rgba(50,48,50,.2) 21%, rgba(50,48,50,.2) 34%, rgba(50,48,50,.7) 35%, rgba(50,48,50,.7)),
+    radial-gradient(circle at 0% 50%, rgba(50,48,50,.7) 20%, rgba(50,48,50,.2) 21%, rgba(50,48,50,.2) 34%, rgba(50,48,50,.7) 35%, rgba(50,48,50,.7)) 0 -80px;
+  background-color: var(--red-team-deep-color, #B32728);
+  background-size: 120px 160px;
+}
+
 body.team-blue {
   background:
     radial-gradient(rgba(255,255,255,.1) 15%, transparent 16%),
     radial-gradient(rgba(255,255,255,.1) 15%, transparent 16%),
     #323032;
+  background-position: 0 0, 60px 60px;
+  background-size:120px 120px;
+}
+
+body.team-blue.active {
+  background:
+    radial-gradient(rgba(50,48,50,.1) 15%, rgba(50,48,50,.6) 16%),
+    radial-gradient(rgba(50,48,50,.1) 15%, rgba(50,48,50,.6) 16%),
+    #323032;
+  background-color: var(--blue-team-deep-color, #11779F);
   background-position: 0 0, 60px 60px;
   background-size:120px 120px;
 }
