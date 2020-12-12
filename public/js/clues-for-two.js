@@ -269,7 +269,7 @@ socket.on('disconnect', () => {
   if (!connected) return;
   connected = false;
 
-  disconnectedDiv.style.display = ''
+  disconnectedDiv.style.display = 'block'
 
   let inRoom = gameDiv.style.display != 'none'
   if (inRoom) {
@@ -413,6 +413,7 @@ socket.on('customWords', (data) => {
 socket.on('gameState', (data) =>{           // Response to gamestate update
   if (data.team) {
     playerTeam = data.team
+    document.querySelector('body').className = 'team-' + playerTeam
   }
 
   updateTeamColors(data);
@@ -506,7 +507,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
       guessesAvailable.innerText = '∞'
     } else {
       clueCountView = ' (' + game.clue.count + ')'
-      guessesAvailable.innerText = Number(game.clue.count) + 1
+      guessesAvailable.innerText = game.clue.count + "+1"
     }
     if (game.clue.count === '0') {
       guessesAvailable.innerText = '∞'
@@ -581,7 +582,14 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
     for (let y = 0; y < 5; y++){
       let button = row.children[y]
       button.innerHTML = board[x][y].word
+
+      // Clear previous changes to tile.
       button.className = "tile"
+      button.removeAttribute("title")
+      while (button.lastElementChild) {
+        button.removeChild(button.lastElementChild)
+      }
+
       const tile = board[x][y]
       if (tile.type === 'red') button.className += " r"    // Red tile
       if (tile.type === 'blue') button.className += " b"   // Blue tile
