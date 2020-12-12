@@ -103,8 +103,14 @@ joinPassword.value = extractFromFragment(window.location.hash, 'password');
 
 // UI Interaction with server
 ////////////////////////////////////////////////////////////////////////////
+function storeNickname() {
+  localStorage.setItem('clues-for-two.nickname', joinNickname.value)
+}
+joinNickname.value = localStorage.getItem('clues-for-two.nickname')
+
 // User Joins Room
 function enterRoom() {
+  storeNickname()
   socket.emit('joinRoom', {
     nickname:joinNickname.value,
     room:joinRoom.value,
@@ -119,6 +125,7 @@ document.getElementById('join-form').addEventListener('submit', (e) => {
 joinEnter.onclick = enterRoom
 // User Creates Room
 joinCreate.onclick = () => {
+  storeNickname()
   socket.emit('createRoom', {
     nickname:joinNickname.value,
     room:joinRoom.value,
