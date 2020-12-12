@@ -269,7 +269,7 @@ socket.on('disconnect', () => {
   if (!connected) return;
   connected = false;
 
-  disconnectedDiv.style.display = ''
+  disconnectedDiv.style.display = 'block'
 
   let inRoom = gameDiv.style.display != 'none'
   if (inRoom) {
