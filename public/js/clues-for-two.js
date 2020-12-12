@@ -505,7 +505,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   if (playerRole === 'spymaster') {
     endTurn.disabled = true // Disable end turn button for spymasters
   }
-  clueEntryDiv.style.display = playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
+  clueEntryDiv.style.display = !game.over && playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
   if (game.over || game.clue === null){
     clueDisplay.innerText = ''
     guessesAvailable.innerText = '?'
