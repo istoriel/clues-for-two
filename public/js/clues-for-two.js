@@ -413,6 +413,7 @@ socket.on('customWords', (data) => {
 socket.on('gameState', (data) =>{           // Response to gamestate update
   if (data.team) {
     playerTeam = data.team
+    document.querySelector('body').className = 'team-' + playerTeam
   }
 
   updateTeamColors(data);
