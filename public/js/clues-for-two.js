@@ -505,7 +505,12 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   if (playerRole === 'spymaster') {
     endTurn.disabled = true // Disable end turn button for spymasters
   }
-  clueEntryDiv.style.display = !game.over && playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
+  if (!game.over && playerRole === 'spymaster' && game.clue === null && team === game.turn) {
+    clueEntryDiv.style.display = ''
+    document.title = "(*) Clues For Two"
+} else {
+    clueEntryDiv.style.display = 'none'
+  }
   if (game.over || game.clue === null){
     clueDisplay.innerText = ''
     guessesAvailable.innerText = '?'
@@ -525,7 +530,33 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     if (game.clue.count === '0') {
       guessesAvailable.innerText = '∞'
     }
+    let oldClueDisplay = clueDisplay.innerText
     clueDisplay.innerText = game.clue.word + clueCountView
+
+    document.title = "Clues For Two"
+    if (playerTeam == game.turn && playerRole !== 'spymaster') {
+      document.title = "(*) Clues For Two"
+    }
+    if (clueDisplay.innerText != oldClueDisplay && (playerRole !== 'spymaster' || playerTeam != game.turn)) {
+      function sendNotification() {
+        let notification = new Notification("New clue for " + colorAndTypeToTextMap[game.turn] + ": " + clueDisplay.innerText,
+          { 'title': 'Clues For Two',
+            'vibrate': [100, 100],
+          })
+      }
+      if (!("Notification" in window)) {
+        // notifications unsupported
+      } else if (Notification.permission === "granted") {
+        sendNotification()
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function (permission) {
+          // If the user accepts, let's create a notification
+          if (permission === "granted") {
+            sendNotification()
+          }
+        })
+      }
+    }
   }
   guessesUsed.innerText = game.guessesUsed
 }
