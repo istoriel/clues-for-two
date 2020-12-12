@@ -350,6 +350,7 @@ socket.on('leaveResponse', (data) =>{       // Response to leaving room
   if(data.success){
     joinDiv.style.display = 'block'
     gameDiv.style.display = 'none'
+    document.querySelector('body').className = ''
     wipeBoard();
     playerRole = 'guesser'
   }
@@ -384,6 +385,11 @@ socket.on('afkKicked', () => {    // Response to Afk Kick
   serverMessageWindow.style.display = 'block'
   serverMessage.innerHTML = 'You were kicked for being AFK'
   overlay.style.display = 'block'
+  joinDiv.style.display = 'block'
+  gameDiv.style.display = 'none'
+  document.querySelector('body').className = ''
+  wipeBoard();
+  playerRole = 'guesser'
 })
 
 socket.on('serverMessage', (data) => {    // Response to Server message
@@ -499,7 +505,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   if (playerRole === 'spymaster') {
     endTurn.disabled = true // Disable end turn button for spymasters
   }
-  clueEntryDiv.style.display = playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
+  clueEntryDiv.style.display = !game.over && playerRole === 'spymaster' && game.clue === null && team === game.turn ? '' : 'none'
   if (game.over || game.clue === null){
     clueDisplay.innerText = ''
     guessesAvailable.innerText = '?'
@@ -613,6 +619,9 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
         button.className += " s"    // Flag all tiles if the client is a spy master
         // show clues associated with tile
         if (tile.type === team || gameOver) {
+          if (clueEntryDiv.style.display != 'none' && !tile.flipped) {
+            button.className += " canClue"
+          }
           if (tile.clues && tile.clues.length > 0) {
             const clues = tile.clues.map(c => '"' + c.word + '"' +
               (c.count === ''
