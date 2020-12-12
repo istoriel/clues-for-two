@@ -350,6 +350,7 @@ socket.on('leaveResponse', (data) =>{       // Response to leaving room
   if(data.success){
     joinDiv.style.display = 'block'
     gameDiv.style.display = 'none'
+    document.querySelector('body').className = ''
     wipeBoard();
     playerRole = 'guesser'
   }
@@ -384,6 +385,7 @@ socket.on('afkKicked', () => {    // Response to Afk Kick
   serverMessageWindow.style.display = 'block'
   serverMessage.innerHTML = 'You were kicked for being AFK'
   overlay.style.display = 'block'
+  document.querySelector('body').className = ''
 })
 
 socket.on('serverMessage', (data) => {    // Response to Server message
