@@ -582,7 +582,14 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
     for (let y = 0; y < 5; y++){
       let button = row.children[y]
       button.innerHTML = board[x][y].word
+
+      // Clear previous changes to tile.
       button.className = "tile"
+      button.removeAttribute("title")
+      while (button.lastElementChild) {
+        button.removeChild(button.lastElementChild)
+      }
+
       const tile = board[x][y]
       if (tile.type === 'red') button.className += " r"    // Red tile
       if (tile.type === 'blue') button.className += " b"   // Blue tile
