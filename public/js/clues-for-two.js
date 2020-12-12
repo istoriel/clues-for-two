@@ -619,6 +619,9 @@ function updateBoard(board, proposals, gameOver, turn, team, clueWords){
         button.className += " s"    // Flag all tiles if the client is a spy master
         // show clues associated with tile
         if (tile.type === team || gameOver) {
+          if (clueEntryDiv.style.display != 'none' && !tile.flipped) {
+            button.className += " canClue"
+          }
           if (tile.clues && tile.clues.length > 0) {
             const clues = tile.clues.map(c => '"' + c.word + '"' +
               (c.count === ''
