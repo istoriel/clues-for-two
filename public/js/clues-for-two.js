@@ -1,5 +1,7 @@
 let socket = io({path: window.location.pathname + 'socket.io'}) // Connect to server
 
+let bodyElement = document.querySelector('body')
+
 // Reconnect dialog
 let disconnectedDiv = document.getElementById('disconnected')
 let reconnectLink = document.getElementById('reconnect')
@@ -53,6 +55,8 @@ let buttonModeCasual = document.getElementById('mode-casual')
 let buttonModeTimed = document.getElementById('mode-timed')
 let buttonConsensusSingle = document.getElementById('consensus-single')
 let buttonConsensusConsensus = document.getElementById('consensus-consensus')
+let buttonNoficationsOff = document.getElementById('notifications-off')
+let buttonNoficationsOn = document.getElementById('notifications-on')
 let buttonAbout = document.getElementById('about-button')
 let buttonAfk = document.getElementById('not-afk')
 let buttonServerMessageOkay = document.getElementById('server-message-okay')
@@ -95,6 +99,8 @@ buttonRoleGuesser.disabled = true;
 buttonRoleSpymaster.disabled = false;
 buttonConsensusSingle.disabled = true;
 buttonConsensusConsensus.disabled = false;
+buttonNoficationsOn.disabled = "Notification" in window && Notification.permission == "granted" && localStorage.getItem('clues-for-two.notifications') != 'false'
+buttonNoficationsOff.disabled = !buttonNoficationsOn.disabled
 
 // Autofill room and password from query fragment
 joinRoom.value = extractFromFragment(window.location.hash, 'room');
@@ -201,6 +207,45 @@ buttonConsensusSingle.onclick = () => {
 // User Picks Consensus Consensus Mode
 buttonConsensusConsensus.onclick = () => {
   socket.emit('switchConsensus', {consensus:'consensus'})
+}
+buttonNoficationsOff.onclick = () => {
+  buttonNoficationsOn.disabled = false
+  buttonNoficationsOff.disabled = true
+  localStorage.setItem('clues-for-two.notifications', 'false')
+}
+buttonNoficationsOn.onclick = () => {
+  if ("Notification" in window) {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        buttonNoficationsOn.disabled = true
+        buttonNoficationsOff.disabled = false
+        localStorage.setItem('clues-for-two.notifications', 'true')
+      }
+    })
+  }
+}
+function displayNotification(str) {
+  if (localStorage.getItem('clues-for-two.notifications') == 'false') return
+
+  function sendNotification() {
+    let notification = new Notification('Clues For Two', {
+        'body': str,
+        'vibrate': [100, 100],
+        'renotify': true,
+      })
+  }
+  if (!("Notification" in window)) {
+    // notifications unsupported
+  } else if (Notification.permission === "granted") {
+    sendNotification()
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        sendNotification()
+      }
+    })
+  }
 }
 // User Ends Turn
 endTurn.onclick = () => {
@@ -350,7 +395,7 @@ socket.on('leaveResponse', (data) =>{       // Response to leaving room
   if(data.success){
     joinDiv.style.display = 'block'
     gameDiv.style.display = 'none'
-    document.querySelector('body').className = ''
+    bodyElement.className = ''
     wipeBoard();
     playerRole = 'guesser'
   }
@@ -387,7 +432,7 @@ socket.on('afkKicked', () => {    // Response to Afk Kick
   overlay.style.display = 'block'
   joinDiv.style.display = 'block'
   gameDiv.style.display = 'none'
-  document.querySelector('body').className = ''
+  bodyElement.className = ''
   wipeBoard();
   playerRole = 'guesser'
 })
@@ -426,7 +471,7 @@ socket.on('customWords', (data) => {
 socket.on('gameState', (data) =>{           // Response to gamestate update
   if (data.team) {
     playerTeam = data.team
-    document.querySelector('body').className = 'team-' + playerTeam
+    bodyElement.className = 'team-' + playerTeam
   }
 
   updateTeamColors(data);
@@ -496,6 +541,8 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
   overallScoreBlue.innerHTML=roomScoreBlue
   turnMessage.innerHTML = colorAndTypeToTextMap[game.turn] + "'s turn"           // Update the turn msg
   turnMessage.className = game.turn                       // Change color of turn msg
+  document.title = "Clues For Two"
+  bodyElement.classList.remove("active")
   if (game.over){                                         // Display winner
     turnMessage.innerHTML = colorAndTypeToTextMap[game.winner] + " wins!"
     turnMessage.className = game.winner
@@ -506,8 +553,12 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     endTurn.disabled = true // Disable end turn button for spymasters
   }
   if (!game.over && playerRole === 'spymaster' && game.clue === null && team === game.turn) {
+    if (clueEntryDiv.style.display != '') {
+      displayNotification(colorAndTypeToTextMap[game.turn] + "'s turn to give a clue.")
+    }
     clueEntryDiv.style.display = ''
     document.title = "(*) Clues For Two"
+    bodyElement.classList.add("active")
 } else {
     clueEntryDiv.style.display = 'none'
   }
@@ -533,29 +584,14 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     let oldClueDisplay = clueDisplay.innerText
     clueDisplay.innerText = game.clue.word + clueCountView
 
-    document.title = "Clues For Two"
     if (playerTeam == game.turn && playerRole !== 'spymaster') {
       document.title = "(*) Clues For Two"
+      bodyElement.classList.add("active")
     }
-    if (clueDisplay.innerText != oldClueDisplay && (playerRole !== 'spymaster' || playerTeam != game.turn)) {
-      function sendNotification() {
-        let notification = new Notification("New clue for " + colorAndTypeToTextMap[game.turn] + ": " + clueDisplay.innerText,
-          { 'title': 'Clues For Two',
-            'vibrate': [100, 100],
-          })
-      }
-      if (!("Notification" in window)) {
-        // notifications unsupported
-      } else if (Notification.permission === "granted") {
-        sendNotification()
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(function (permission) {
-          // If the user accepts, let's create a notification
-          if (permission === "granted") {
-            sendNotification()
-          }
-        })
-      }
+    if (clueDisplay.innerText != oldClueDisplay && (playerRole !== 'spymaster'
+         || playerTeam != game.turn)) {
+      displayNotification("New clue for " + colorAndTypeToTextMap[game.turn]
+                           + ": " + clueDisplay.innerText)
     }
   }
   guessesUsed.innerText = game.guessesUsed
