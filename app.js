@@ -555,6 +555,10 @@ function newGame(socket, data){
 function switchRole(socket, data){
   let currentPlayer = PLAYER_LIST[socket.id]
   if (!currentPlayer) return // Prevent Crash
+  if (data.role !== 'guesser' && data.role !== 'spymaster'){
+    socket.emit('switchRoleResponse', {success:false})
+    return
+  }
   let room = currentPlayer.room // Get the room that the client called from
 
   if (currentPlayer.team !== 'red' && currentPlayer.team !== 'blue'){
@@ -717,7 +721,9 @@ function gameUpdate(room, toUpdate){
   }
   for (let player in roomDetails.players){ // For everyone in the passed room
     if (!toUpdate || toUpdate.includes(player)) {
-      gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
+      // Add specific clients team info
+      gameState.team = PLAYER_LIST[player].team
+      gameState.role = PLAYER_LIST[player].role
       SOCKET_LIST[player].emit('gameState', gameState)  // Pass data to the client
     }
   }
