@@ -548,7 +548,7 @@ function updateInfo(game, team, roomScoreRed, roomScoreBlue){
     turnMessage.innerHTML = colorAndTypeToTextMap[game.winner] + " wins!"
     turnMessage.className = game.winner
   }
-  if (team !== game.turn) endTurn.disabled = true         // Disable end turn button for opposite team
+  if (team !== game.turn || game.over) endTurn.disabled = true         // Disable end turn button for opposite team
   else endTurn.disabled = false
   if (playerRole === 'spymaster') {
     endTurn.disabled = true // Disable end turn button for spymasters
