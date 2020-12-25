@@ -717,7 +717,9 @@ function gameUpdate(room, toUpdate){
   }
   for (let player in roomDetails.players){ // For everyone in the passed room
     if (!toUpdate || toUpdate.includes(player)) {
-      gameState.team = PLAYER_LIST[player].team  // Add specific clients team info
+      // Add specific clients team info
+      gameState.team = PLAYER_LIST[player].team
+      gameState.role = PLAYER_LIST[player].role
       SOCKET_LIST[player].emit('gameState', gameState)  // Pass data to the client
     }
   }
