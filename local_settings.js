@@ -12,5 +12,6 @@ var config = module.exports = {
   additionalCardPacks: [
     {name: "Star Trek: TNG Pack", filename: "./server/st-tng-words.txt"},
     {name: "Star Trek: DS9 Pack", filename: "./server/st-ds9-words.txt"},
+    {name: "Christmas", filename: "./server/christmas-words.txt"},
   ],
 }
